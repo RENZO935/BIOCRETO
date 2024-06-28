@@ -10,9 +10,29 @@ import MODELO.AlmacenDAO;
 import MODELO.Cliente;
 import MODELO.ClienteDAO;
 import MODELO.Detalle;
+import MODELO.Eventos;
 import MODELO.Venta;
 import MODELO.VentaDAO;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.Desktop;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -29,6 +49,7 @@ public class REGISTRAR_VENTA extends javax.swing.JFrame {
     VentaDAO vdao=new VentaDAO();
     Detalle Dv=new Detalle();
      DefaultTableModel tmp = new DefaultTableModel();
+     Eventos event=new Eventos();
     
             
         public REGISTRAR_VENTA() {
@@ -38,6 +59,7 @@ public class REGISTRAR_VENTA extends javax.swing.JFrame {
         txtTelefonoCV.setVisible(false);
         txtDireccionCV.setVisible(false);
         txtRazonCV.setVisible(false);
+           
         }
 
     /**
@@ -109,18 +131,41 @@ public class REGISTRAR_VENTA extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtCodigoVentaKeyPressed(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCodigoVentaKeyTyped(evt);
+            }
+        });
+
+        txtDescripcionVenta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDescripcionVentaKeyTyped(evt);
+            }
         });
 
         txtCantidadVenta.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtCantidadVentaKeyPressed(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCantidadVentaKeyTyped(evt);
+            }
         });
 
         txtPrecioVenta.setEditable(false);
+        txtPrecioVenta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPrecioVentaKeyTyped(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         jLabel5.setText("STOCK:");
+
+        txtStockDisponible.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtStockDisponibleKeyTyped(evt);
+            }
+        });
 
         TableVenta.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -152,10 +197,18 @@ public class REGISTRAR_VENTA extends javax.swing.JFrame {
         jLabel8.setText("NOMBRE");
 
         txtNombreClienteVenta.setEditable(false);
+        txtNombreClienteVenta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreClienteVentaKeyTyped(evt);
+            }
+        });
 
         txtRucVenta.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtRucVentaKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtRucVentaKeyTyped(evt);
             }
         });
 
@@ -447,11 +500,23 @@ public class REGISTRAR_VENTA extends javax.swing.JFrame {
     }//GEN-LAST:event_txtRucVentaKeyPressed
 
     private void btnGenerarVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarVentaActionPerformed
-       RegistrarVenta();
+         if (TableVenta.getRowCount()>0) {
+             if (!"".equals(txtNombreClienteVenta.getText())) {
+                        RegistrarVenta();
        RegistrarDetalle();
        ActalizarStock();
+       pdf();
        LimpiarTableVenta();
        LimpiarClienteVenta();
+             }else {
+             JOptionPane.showMessageDialog(null, "Debes ingresar un cliente");
+             }
+        }else{
+         JOptionPane.showMessageDialog(null, "No hay productos en la venta");
+         }
+        
+ 
+        
     }//GEN-LAST:event_btnGenerarVentaActionPerformed
 
     private void txtIdProActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdProActionPerformed
@@ -463,6 +528,41 @@ public class REGISTRAR_VENTA extends javax.swing.JFrame {
         newframe.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void txtCodigoVentaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoVentaKeyTyped
+        // TODO add your handling code here:
+        event.numberKeyPress(evt);
+    }//GEN-LAST:event_txtCodigoVentaKeyTyped
+
+    private void txtDescripcionVentaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescripcionVentaKeyTyped
+        // TODO add your handling code here:
+        event.textKeyPress(evt);
+    }//GEN-LAST:event_txtDescripcionVentaKeyTyped
+
+    private void txtCantidadVentaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadVentaKeyTyped
+        // TODO add your handling code here:
+        event.numberKeyPress(evt);
+    }//GEN-LAST:event_txtCantidadVentaKeyTyped
+
+    private void txtPrecioVentaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPrecioVentaKeyTyped
+        // TODO add your handling code here:
+        event.numberDecimalKeyPress(evt, txtPrecioVenta);
+    }//GEN-LAST:event_txtPrecioVentaKeyTyped
+
+    private void txtStockDisponibleKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtStockDisponibleKeyTyped
+        // TODO add your handling code here:
+        event.numberKeyPress(evt);
+    }//GEN-LAST:event_txtStockDisponibleKeyTyped
+
+    private void txtRucVentaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRucVentaKeyTyped
+        // TODO add your handling code here:
+        event.numberKeyPress(evt);
+    }//GEN-LAST:event_txtRucVentaKeyTyped
+
+    private void txtNombreClienteVentaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreClienteVentaKeyTyped
+        // TODO add your handling code here:
+        event.textKeyPress(evt);
+    }//GEN-LAST:event_txtNombreClienteVentaKeyTyped
 
     /**
      * @param args the command line arguments
@@ -589,7 +689,7 @@ private void LimpiarTableVenta(){
 tmp=(DefaultTableModel) TableVenta.getModel();
 int fila=TableVenta.getRowCount();
     for (int i = 0; i < fila; i++) {
-        tmp.removeRow(i);
+        tmp.removeRow(0);
         
     }
 }
@@ -601,4 +701,143 @@ private void LimpiarClienteVenta(){
        txtDireccionCV.setText("");
        txtRazonCV.setText("");
 }
+
+private void pdf(){
+    try {
+        FileOutputStream archivo;
+        File file=new File("src/pdf/venta.pdf");
+       archivo =new FileOutputStream(file);
+       Document doc=new Document();
+        PdfWriter.getInstance(doc, archivo);
+        doc.open();
+        Image img= Image.getInstance("src/IMAGENES/logo_biocreto.png");
+        
+        Paragraph fecha=new Paragraph();
+        Font negrita= new Font(Font.FontFamily.TIMES_ROMAN,12,Font.BOLD, BaseColor.BLUE);
+        fecha.add(Chunk.NEWLINE);
+        Date date=new Date();
+        fecha.add("Factura: 1\n"+"Fecha:"+new SimpleDateFormat("dd-mm-yyyy").format(date)+"\n\n");
+        
+        PdfPTable Encabezado=new PdfPTable(4);
+        Encabezado.setWidthPercentage(100);
+        Encabezado.getDefaultCell().setBorder(0);
+        float[] ColumnaEncabezada=new float[]{20f,30f,70f,40f};
+        Encabezado.setWidths(ColumnaEncabezada);
+        Encabezado.setHorizontalAlignment(Element.ALIGN_LEFT);
+        
+        Encabezado.addCell(img);
+        
+        
+        String ruc="20609283178";
+        String nombre="BIOCRETO";
+        String telefono="960 949 377 ";
+        String direccion="San Agustín de Cajas Km 8 – Huancayo";
+        String razon="Biocreto SAC";
+        
+        Encabezado.addCell("");
+        Encabezado.addCell("Ruc "+ruc+"\nNombre: "+nombre+"\nTelefono: "+telefono+"\nDireccion: "+direccion+"\nRazon: "+razon);
+        Encabezado.addCell(fecha);
+        doc.add(Encabezado);
+        
+        Paragraph cli=new Paragraph();
+        cli.add(Chunk.NEWLINE);
+        cli.add("Datos de los Clientes: "+"\n\n");
+        doc.add(cli);
+        
+        PdfPTable tablacli=new PdfPTable(4);
+        tablacli.setWidthPercentage(100);
+        tablacli.getDefaultCell().setBorder(0);
+        float[] columnaCli=new float[]{20f,50f,30f,40f};
+        Encabezado.setWidths(columnaCli);
+        Encabezado.setHorizontalAlignment(Element.ALIGN_LEFT);
+        PdfPCell cell=new PdfPCell(new Phrase("DNI/RUC: ",negrita));
+        PdfPCell cel2=new PdfPCell(new Phrase("Nombre: ",negrita));
+        PdfPCell cel3=new PdfPCell(new Phrase("Teléfono: ",negrita));
+        PdfPCell cel4=new PdfPCell(new Phrase("Dirección: ",negrita));
+        cell.setBorder(0);
+        cel2.setBorder(0);
+        cel3.setBorder(0);
+        cel4.setBorder(0);
+        tablacli.addCell(cell);
+        tablacli.addCell(cel2);
+        tablacli.addCell(cel3);
+        tablacli.addCell(cel4);
+        tablacli.addCell(txtRucVenta.getText());
+        tablacli.addCell(txtNombreClienteVenta.getText());
+        tablacli.addCell(txtTelefonoCV.getText());
+        tablacli.addCell(txtDireccionCV.getText());
+        
+        doc.add(tablacli);
+        
+        //productos 
+        
+        Paragraph pro=new Paragraph();
+        pro.add(Chunk.NEWLINE);
+        pro.add("Detalles de la venta: "+"\n\n");
+        doc.add(pro);
+        
+        
+        PdfPTable tablapro=new PdfPTable(4);
+        tablapro.setWidthPercentage(100);
+        tablapro.getDefaultCell().setBorder(0);
+        float[] columnaPro=new float[]{20f,50f,30f,40f};
+        tablapro.setWidths(columnaPro);
+        tablapro.setHorizontalAlignment(Element.ALIGN_LEFT);
+        PdfPCell prol=new PdfPCell(new Phrase("Cantidad: ",negrita));
+        PdfPCell pro2=new PdfPCell(new Phrase("Descripción: ",negrita));
+        PdfPCell pro3=new PdfPCell(new Phrase("Precio U: ",negrita));
+        PdfPCell pro4=new PdfPCell(new Phrase("Precio T: ",negrita));
+        prol.setBorder(0);
+        pro2.setBorder(0);
+        pro3.setBorder(0);
+        pro4.setBorder(0);
+        tablapro.addCell(prol);
+        tablapro.addCell(pro2);
+        tablapro.addCell(pro3);
+        tablapro.addCell(pro4);
+        for (int i = 0; i <TableVenta.getRowCount(); i++) {
+            String producto=TableVenta.getValueAt(i, 1).toString();
+            String cantidad=TableVenta.getValueAt(i, 2).toString();
+            String precio=TableVenta.getValueAt(i, 3).toString();
+            String total=TableVenta.getValueAt(i, 4).toString();
+        tablapro.addCell(cantidad);
+        tablapro.addCell(producto);
+        tablapro.addCell(precio);
+        tablapro.addCell(total);
+            
+        }
+        doc.add(tablapro);
+        
+        
+        Paragraph info=new Paragraph();
+        info.add(Chunk.NEWLINE);
+        info.add("TOTAL A PAGAR: "+Totalpagar);
+        info.setAlignment(Element.ALIGN_RIGHT);
+        doc.add(info);
+        
+        Paragraph firma=new Paragraph();
+        firma.add(Chunk.NEWLINE);
+        firma.add("Cancelación y firma\n\n ");
+        firma.add("-------------------- ");
+        firma.setAlignment(Element.ALIGN_CENTER);
+        doc.add(firma);
+
+        Paragraph mensaje=new Paragraph();
+        mensaje.add(Chunk.NEWLINE);
+        mensaje.add("Gracias por su Compra\n\n ");
+        mensaje.setAlignment(Element.ALIGN_CENTER);
+        doc.add(mensaje);
+        
+        
+        doc.close();
+        archivo.close();
+        
+        Desktop.getDesktop().open(file);
+    } catch (DocumentException | IOException e) {
+        System.out.println(e.toString());
+    }
+    
+    
+}
+
 }

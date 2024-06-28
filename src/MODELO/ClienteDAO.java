@@ -80,8 +80,8 @@ String sql="DELETE FROM clientes WHERE id = ?";
     }finally{
         try {
              con.close();
-        } catch (SQLException e) {
-            System.out.println(e.toString());
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
         }
    
     }

@@ -7,6 +7,7 @@ package VISTA;
 import MODELO.Almacen;
 import MODELO.AlmacenDAO;
 import MODELO.Cliente;
+import MODELO.Eventos;
 import REPORTE.Excel;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ public class ALMACEN extends javax.swing.JFrame {
     Almacen pro=new Almacen();
     AlmacenDAO prodao=new AlmacenDAO();
         DefaultTableModel modelo = new DefaultTableModel();
+        Eventos event=new Eventos();
     public ALMACEN() {
         initComponents();
         txtID.setVisible(false);
@@ -103,6 +105,30 @@ public class ALMACEN extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         jLabel4.setText("PRECIO:");
+
+        txtCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCodigoKeyTyped(evt);
+            }
+        });
+
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
+            }
+        });
+
+        txtCantidad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCantidadKeyTyped(evt);
+            }
+        });
+
+        txtPrecio.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPrecioKeyTyped(evt);
+            }
+        });
 
         jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
@@ -279,6 +305,8 @@ public class ALMACEN extends javax.swing.JFrame {
         }else{
             JOptionPane.showMessageDialog(null, "Algún campo está vacio");
         }
+        LimpiarTable();
+       LimpiarProductos();
         ListarProductos();
         
     }//GEN-LAST:event_btnguardarActionPerformed
@@ -340,6 +368,28 @@ public class ALMACEN extends javax.swing.JFrame {
         newframe.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
+        // TODO add your handling code here:
+         event.textKeyPress(evt);
+    }//GEN-LAST:event_txtNombreKeyTyped
+
+    private void txtCodigoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyTyped
+        // TODO add your handling code here:
+         event.numberKeyPress(evt);
+    }//GEN-LAST:event_txtCodigoKeyTyped
+
+    private void txtCantidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadKeyTyped
+        // TODO add your handling code here:
+                 event.numberKeyPress(evt);
+
+    }//GEN-LAST:event_txtCantidadKeyTyped
+
+    private void txtPrecioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPrecioKeyTyped
+        // TODO add your handling code here:
+                 event.numberKeyPress(evt);
+
+    }//GEN-LAST:event_txtPrecioKeyTyped
                 
 
     public static void main(String args[]) {

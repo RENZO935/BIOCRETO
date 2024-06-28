@@ -4,20 +4,27 @@
  */
 package MODELO;
 
-import java.sql.Connection;
+
+import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
 
 
 public class Conexion {
-    Connection con;
+   Connection con;
     public Connection getConnection(){
         try {
-            String myBD = "jdbc:mysql://localhost:3306/sistemabiocreto?serverTimezone=UTC";
+           //  String access="jdbc:ucanaccess://D:/BiocretoDataBase.accdb";
+           String myBD = "jdbc:mysql://localhost:3306/sistemabiocreto?serverTimezone=UTC";
             con = DriverManager.getConnection(myBD,"root","");
         } catch (SQLException e) {
             System.out.println(e.toString());
         }
         return con;
-    }
+    } 
+    
+   
 }
